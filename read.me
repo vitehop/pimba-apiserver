@@ -1,0 +1,78 @@
+MODULUS DEPLOY
+--------------
+
+modulus login // victorperez.glez@gmail.com / xcua...
+modulus deploy
+
+HEROKU DEPLOY
+-------------
+
+heroku login // victorperez.glez@gmail.com / Vjar..
+heroku create // ?? Crea una nueva app siempre? nose si es necesario
+git push heroku master // lo subes
+heroku open // abre en navegador la web
+
+INICIO DE APP CON EXPRESS
+-------------------------
+
+nodemon // install y utilizar como node para que no sea necesario reiniciar para ver cambios
+
+
+Pimba! - RESTful API
+
+Docs:
+
+/api/login							POST	: Crea y devuelve un token de autenticación (username y password como parámetros)
+
+/api/users							GET		: Devuelve los detalles del usuario logado, incluyendo sus perspectivas
+/api/users							POST	: Crea un nuevo usuario (username y password como parámetros)
+/api/users							PUT		: Update los detalles del usuario logado (detalles del usuario como parámetros)
+
+/api/cards/<card_id> 				GET 	: Devuelve los detalles de una tarjeta
+/api/cards/<card_id>/perspective	GET		: Devuelve los detalles de una tarjeta, incluyendo sus hijos y nietos
+/api/cards 							POST 	: Crea una tarjeta (detalles de la tarjeta como parámetros)
+/api/cards							PUT		: Actualiza los detalles de una tarjeta (card ID y detalles como parámetros) // TODO
+/api/cards							DELETE	: Elimina una tarjeta (Card ID como parámetro)
+
+/api/perspectives					POST	: Crea una nueva perspectiva para el usuario logado (Card ID como parámetro) // TODO
+/api/perspectives					DELETE	: Elimina una perspectiva del usuario logado (Card ID como parámetro) // TODO
+
+
+Concepto de perspectivas
+========================
+Para simplificar, el conjunto de perspectivas de un usuario es un listado de IDs de tarjeta.
+Siempre que el usuario cree una tarjeta nueva sin estar anidada dentro de otra, automáticamente se incluirá entre sus perspectivas.
+Manualmente, el usuario puede guardar como perspectiva cualquier otra tarjeta anidada.
+(Ver mockups)
+
+
+Cómo funciona la autenticación
+==============================
+1) Un usuario existente se logea en POST /api/login con los parámetros username(String) y password(String).
+
+2) La API responde con un token.
+
+3) El cliente almacena este token donde quiera/pueda (sesión, etc)
+
+4) Para el resto de requests, el cliente incluye un header "Authorization" en su request con el valor: "Bearer <token>"
+
+5) El token es válido durante 60 minutos, pasado ese tiempo se solicita otro en /api/login (no es necesario incluir el header)
+
+- Los usuarios nuevos se crean en POST /api/users con los parámetros username y password (no es necesaria autenticación)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
