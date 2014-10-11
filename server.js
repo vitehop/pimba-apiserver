@@ -38,10 +38,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // MongoDB setups
-mongoose.connect('mongodb://braqio:braqio2014@ds039950.mongolab.com:39950/braqio-dev'); //  MongoLab - account victorperez.glez@gmail.com
+// MongoLab - account victorperez.glez@gmail.com
+mongoose.connect('mongodb://braqio:braqio2014@ds039950.mongolab.com:39950/braqio-dev'); 
 
 var port = process.env.PORT || 8080; 		// set our port
-// app.set('views', __dirname + '/public');	// Publicamos bajo el server la carpeta /public, de momento no lo necesito para la API 
+app.use(express.static(__dirname + '/public'));	// Publicamos bajo el server la carpeta /public
 
 
 
