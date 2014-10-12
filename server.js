@@ -124,7 +124,7 @@ router.route('/cards/:card_id')
 	// 	/api/cards/[card_id] GET
 	// 	---------------------------------------
 	.get(jwt({secret: secret.secretToken}),function(req, res) {
-		
+
 		Card.findById(req.params.card_id, function(err, card) {
 			if (err) res.send(err);
 			res.json(card);
@@ -137,28 +137,50 @@ router.route('/cards/:card_id')
 	.put(jwt({secret: secret.secretToken}),function(req, res) {
 
 		// use our card model to find the card we want
-		Card.findById({user: req.user._id, _id: req.params.card_id}, function(err, card) {
+		Card.findById({_id: req.params.card_id}, function(err, card) {
 
 			if (err) res.send(err);
-			card.title = req.body.title; // update the card info
-			card.description = req.body.description;
 			
-			// Cuando la tarjeta cambie de padre nos llegará el ID del nuevo padre, por el modelo utilizado es necesario
-			// ir a ese padre y añadir esta tarjeta a su lista de hijos.
-			// Tambien será necesario ir a su padre actual y eliminarlo (vaya lío)
-			// Todo esto si se implementa un modelo de arbol con relaciones a hijos
-			// Mas info aquí http://docs.mongodb.org/manual/tutorial/model-tree-structures-with-child-references/
-			// En teoría sería buena idea para poder obtener rápidamente una perspectiva a partir de una tarjeta (tienes que ir 
-			// hacia sus hijos y nietos, ese servicio ya está implementado con este modelo en /api/perspectives/<card_id>)
-			
-			card.childs = req.body.childs;
-			card.parent = req.body.parent;
-			card.user = req.user._id;
-			// save the card
-			card.save(function(err) {
-				if (err) res.send(err);
-				res.json({ message: 'Card updated!' });
+			// update the card info, solo si los parámetros vienen en la request
+			if(req.body.title) card.title = req.body.title; 
+			if(req.body.description) card.description = req.body.description;	
+
+			// Si es el padre lo que hay que actualizar, además del propio campo de padre en la tarjeta también 
+			// hay que actualizar los hijos de su nuevo padre, y eliminar el hijo de su padre anterior
+			if(req.body.parent) {
+
+				//Añadimos el hijo a su nuevo padre
+				Card.findByID({_id: req.body.parent}, function(err,parentCard) {
+					if(err) res.send(err);
+					parentCard.childs.push(req.params.card_id);
+				
+					parentCard.save(function(err){
+						if(err) res.send(err);
+					});
+				});
+
+				//Eliminamos el hijo de su padre anterior
+				Card.findByID({_id: card.parent}, function(err,oldParentCard){
+					if(err) res.send(err);
+					var index=oldParentCard.childs.indexOf(req.params.card_id);
+					oldParentCard.childs.splice(index,1);
+
+					oldParentCard.save(function(err){
+						if(err) res.send(err);
+					});
+				});
+
+				//Finalmente actualizamos el padre en la tarjeta que estamos editando
+				card.parent = req.body.parent;
+
+			}
+
+			// Guardamos finalmente la tarjeta con todos los cambios
+			card.save(function(err){
+				if(err) res.send(err);
+				res.json({message: 'Card updated!'});
 			});
+			
 		});
 	})
 
@@ -167,16 +189,82 @@ router.route('/cards/:card_id')
 	// 	---------------------------------------
 	.delete(jwt({secret: secret.secretToken}),function(req, res) {
 		
+		// obtengo el ID del usuario logado a partir del token de autenticación
+		var token = (req.headers["authorization"]).substring(7);
+		var token_decoded = jsonwebtoken.decode(token);
+		var user_id = token_decoded.id;
+
 		Card.remove({
 			_id: req.params.card_id,
-			user: req.user._id
+			user: user_id
 		}, function(err, card) {
 			if (err)
 				res.send(err);
 
-			res.json({ message: 'Successfully deleted!' });
+			res.json({ message: 'Card successfully deleted!' });
 		});
 	})
+
+
+// ----------------------------
+// RUTA: /api/perspectives
+// ----------------------------
+
+router.route('/perspectives')
+
+	// ----------------------------
+	// POST /api/perspectives
+	// ----------------------------
+	// Crea una nueva perspectiva para el usuario logado a partir de una tarjeta
+
+	.post(jwt({secret: secret.secretToken}), function(req,res){
+
+		// obtengo el ID del usuario logado a partir del token de autenticación
+		var token = (req.headers["authorization"]).substring(7);
+		var token_decoded = jsonwebtoken.decode(token);
+		var user_id = token_decoded.id;
+
+		// insertamos el parametro req.card_id como perspectiva al usuario
+		User.findById( user_id , function(err, user) {
+			if (err) res.send(err);			
+			user.perspectives.push(req.params.card_id);
+		});
+
+		// guardamos el usuario
+		user.save(function(err){
+			if (err) res.send(err);
+			res.json({message: 'Perspective added!'});
+		});
+
+	})
+
+	// ----------------------------
+	// DELETE /api/perspectives
+	// ----------------------------
+	// Elimina una perspectiva existente para el usuario
+
+	.delete(jwt({secret: secret.secretToken}), function(req,res){
+		
+		// obtengo el ID del usuario logado a partir del token de autenticación
+		var token = (req.headers["authorization"]).substring(7);
+		var token_decoded = jsonwebtoken.decode(token);
+		var user_id = token_decoded.id;
+
+		User.findById(user_id, function(err,user){
+			if(err) res.send(err);
+
+			var index=user.perspectives.indexOf(req.params.perspective_id);
+			user.perspectives.splice(index,1);
+
+		});
+
+		// guardamos el usuario
+		user.save(function(err){
+			if (err) res.send(err);
+			res.json({message: 'Perspective successfully deleted!'});
+		});
+	});
+
 
 
 // ---------------------------------------
@@ -209,6 +297,8 @@ router.route('/perspectives/:card_id')
 			
 		});
 	});
+
+
  
 
 // ---------------------------------------
@@ -265,8 +355,8 @@ router.route('/users')
 		User.findById( user_id , function(err, user) {
 			if (err) res.send(err);
 
-			user.username = req.body.username;
-			user.password = req.body.password;
+			if(req.body.username) user.username = req.body.username;
+			if(req.body.password) user.password = req.body.password;
 
 
 			user.save(function(err){
