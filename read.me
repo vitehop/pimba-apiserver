@@ -30,8 +30,8 @@ Docs:
 
 /api/cards/<card_id> 				GET 	: Devuelve los detalles de una tarjeta
 /api/cards		 					POST 	: Crea una tarjeta (detalles de la tarjeta como parámetros)
-/api/cards							PUT		: Actualiza los detalles de una tarjeta (card ID y detalles como parámetros)
-/api/cards							DELETE	: Elimina una tarjeta (Card ID como parámetro)
+/api/cards/<card_id>				PUT		: Actualiza los detalles de una tarjeta (detalles como parámetro)
+/api/cards/<card_id>				DELETE	: Elimina una tarjeta
 
 /api/perspectives/<card_id>			GET		: Devuelve la perspectiva de esa tarjeta
 /api/perspectives					POST	: Crea una nueva perspectiva para el usuario logado (Card ID como parámetro)

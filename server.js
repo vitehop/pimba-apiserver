@@ -79,7 +79,7 @@ router.route('/cards')
 		var card = new Card(); 		// create a new instance of the Card model
 
 		// Establecemos las propiedades de la nueva tarjeta. Si no tiene padre ese campo quedaría vacío
-		card.user = user._id;
+		card.user = user_id;
 		card.title = req.body.title; 
 		card.description = req.body.description;
 		card.parent = req.body.parent;
@@ -137,7 +137,7 @@ router.route('/cards/:card_id')
 	.put(jwt({secret: secret.secretToken}),function(req, res) {
 
 		// use our card model to find the card we want
-		Card.findById({_id: req.params.card_id}, function(err, card) {
+		Card.findById(req.params.card_id, function(err, card) {
 
 			if (err) res.send(err);
 			
@@ -150,7 +150,7 @@ router.route('/cards/:card_id')
 			if(req.body.parent) {
 
 				//Añadimos el hijo a su nuevo padre
-				Card.findByID({_id: req.body.parent}, function(err,parentCard) {
+				Card.findById(req.body.parent, function(err,parentCard) {
 					if(err) res.send(err);
 					parentCard.childs.push(req.params.card_id);
 				
@@ -160,7 +160,7 @@ router.route('/cards/:card_id')
 				});
 
 				//Eliminamos el hijo de su padre anterior
-				Card.findByID({_id: card.parent}, function(err,oldParentCard){
+				Card.findById(card.parent, function(err,oldParentCard){
 					if(err) res.send(err);
 					var index=oldParentCard.childs.indexOf(req.params.card_id);
 					oldParentCard.childs.splice(index,1);
@@ -329,6 +329,7 @@ router.route('/users')
 	// ---------------------------------------
 	
 	.post(function(req,res){
+
 		var user = new User();
 		user.username = req.body.username;
 		user.password = req.body.password;
