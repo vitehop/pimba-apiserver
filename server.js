@@ -38,8 +38,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // MongoDB setups
-// MongoLab - account victorperez.glez@gmail.com
-mongoose.connect('mongodb://braqio:braqio2014@ds039950.mongolab.com:39950/braqio-dev'); 
+// MongoLab - account vitehop@gmail.com
+mongoose.connect('mongodb://pimba:pimba@ds041167.mongolab.com:41167/pimba'); 
 
 var port = process.env.PORT || 8080; 		// set our port
 app.use(express.static(__dirname + '/public'));	// Publicamos bajo el server la carpeta /public
@@ -393,6 +393,11 @@ router.route('/login')
 	            console.log(err);
 	            return res.send(401);
 	        }
+
+	        if(!user){
+	        	res.json({message: 'Invalid username'});
+	        }
+
  		   	console.log(user);
 	        user.comparePassword(password, function(isMatch) {
 	            if (!isMatch) {
