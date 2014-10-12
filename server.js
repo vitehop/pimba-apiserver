@@ -70,14 +70,19 @@ router.route('/cards')
 	// Crea una nueva tarjeta
 	
 	.post(jwt({secret: secret.secretToken}),function(req, res) {
+
+		// obtengo el ID del usuario logado a partir del token de autenticación
+		var token = (req.headers["authorization"]).substring(7);
+		var token_decoded = jsonwebtoken.decode(token);
+		var user_id = token_decoded.id;
 		
 		var card = new Card(); 		// create a new instance of the Card model
-		card.user = req.user._id;
-		card.title = req.body.title;  // set the card properties (comes from the request)
+
+		// Establecemos las propiedades de la nueva tarjeta. Si no tiene padre ese campo quedaría vacío
+		card.user = user._id;
+		card.title = req.body.title; 
 		card.description = req.body.description;
-		card.childs = req.body.childs;
 		card.parent = req.body.parent;
-		console.log(req.body.title);
 
 		// save the card and check for errors
 		card.save(function(err) {
@@ -93,10 +98,16 @@ router.route('/cards')
 	// /api/cards GET
 	// ---------------------------------------
 	// Obtiene todas las tarjetas
+	// Este metodo no está documentado, no sería necesario. Está aquí para hacer pruebas
 	
 	.get(jwt({secret: secret.secretToken}),function(req, res) {
-				
-		Card.find({user: req.user._id},function(err, cards) {
+		
+		// obtengo el ID del usuario logado a partir del token de autenticación
+		var token = (req.headers["authorization"]).substring(7);
+		var token_decoded = jsonwebtoken.decode(token);
+		var user_id = token_decoded.id;
+
+		Card.find({user: user_id},function(err, cards) {
 			if (err) res.send(err);
 			res.json(cards);
 		});

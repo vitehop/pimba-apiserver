@@ -29,11 +29,11 @@ Docs:
 /api/users							PUT		: Update los detalles del usuario logado (detalles del usuario como parámetros)
 
 /api/cards/<card_id> 				GET 	: Devuelve los detalles de una tarjeta
-/api/cards/<card_id>/perspective	GET		: Devuelve los detalles de una tarjeta, incluyendo sus hijos y nietos
-/api/cards 							POST 	: Crea una tarjeta (detalles de la tarjeta como parámetros)
-/api/cards							PUT		: Actualiza los detalles de una tarjeta (card ID y detalles como parámetros) // TODO
+/api/cards		 					POST 	: Crea una tarjeta (detalles de la tarjeta como parámetros)
+/api/cards							PUT		: Actualiza los detalles de una tarjeta (card ID y detalles como parámetros)
 /api/cards							DELETE	: Elimina una tarjeta (Card ID como parámetro)
 
+/api/perspectives/<card_id>			GET		: Devuelve la perspectiva de esa tarjeta
 /api/perspectives					POST	: Crea una nueva perspectiva para el usuario logado (Card ID como parámetro) // TODO
 /api/perspectives					DELETE	: Elimina una perspectiva del usuario logado (Card ID como parámetro) // TODO
 
