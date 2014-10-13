@@ -251,13 +251,14 @@ router.route('/perspectives')
 		// insertamos el parametro req.card_id como perspectiva al usuario
 		User.findById( user_id , function(err, user) {
 			if (err) res.send(err);			
-			user.perspectives.push(req.params.card_id);
-		});
+			user.perspectives.push(req.body.card_id);
+		
+			// guardamos el usuario
+			user.save(function(err){
+				if (err) res.send(err);
+				res.json({message: 'Perspective added!'});
+			});
 
-		// guardamos el usuario
-		user.save(function(err){
-			if (err) res.send(err);
-			res.json({message: 'Perspective added!'});
 		});
 
 	})
