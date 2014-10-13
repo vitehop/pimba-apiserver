@@ -278,24 +278,27 @@ router.route('/perspectives/:card_id')
 	// 	---------------------------------------
 	//  Obtiene un JSON con las tarjetas necesarias para representar una perspectiva cualquiera.
 	//  Se utiliza un populate normal para recoger hijos y un populate anidado para los nietos de la tarjeta.
-	//  Explicación del código en http://stackoverflow.com/questions/13077609/mongoose-populate-embedded 
+	//  Explicación del código en http://stackoverflow.com/questions/19222520/populate-nested-array-in-mongoose
 	
 	.get(jwt({secret: secret.secretToken}),function(req, res) {
-		
-		Card
-		.findById(req.params.card_id)
-		.populate('childs')
-		.populate('parent') // se popula el primer nivel (hijos)
-		.exec(function (err, childrens) {
-			
-			Card.populate(childrens.childs, {path:'childs'}, // se popula el segundo nivel (nietos)
-			function (err,perspective) {
-				if (err) res.send(err);
-				
-				res.json(perspective);
-			});
-			
-		});
+
+ 		Card.findById(req.params.card_id)
+  		.lean()
+  		.populate({ path: 'childs' })
+  		.exec(function(err, docs) {
+
+    	var options = {
+      		path: 'childs.childs',
+      		model: 'Card'
+    		};
+
+    	if (err) return res.json(500);
+    	Card.populate(docs, options, function (err, perspectiva) {
+      		res.json(perspectiva);
+    		});
+
+  		});
+
 	});
 
 
@@ -406,7 +409,7 @@ router.route('/login')
 	                return res.send(401);
 	            }
 				
-				var token = jsonwebtoken.sign({id: user._id}, secret.secretToken, { expiresInMinutes: 60 });
+				var token = jsonwebtoken.sign({id: user._id}, secret.secretToken, { expiresInMinutes: 60000 });
  
 	            return res.json({token:token});
 	        });
