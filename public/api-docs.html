@@ -20,9 +20,423 @@
   <body>
 
 <div class="container">
+
   <div class="page-header">
     <h1>Pimba! <small>API Docs</small></h1>
   </div>
+
+
+
+  <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/login POST</h4></div>
+    <div class="col-md-7">
+        <h4>Get an authentication token from a existing user</h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>username</td><td>(String) Required</td>
+        </tr><tr><td>password</td><td>(String) Required</td></tr>
+        </tbody></table>
+
+        <h5>Sample response:</h5>
+        <pre>
+{ 
+token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9. eyJpZCI6IjU0M2E4ZGVlMmQ0YTQ4ZjgzZjAwMDAwMSIsImlhdCI6MTQxMzEyMzg4NCwiZXhwIjoxNDEzMTI3NDg0fQ.QOURHM8TTOj3zyOKXtAYWApAwPICfaBK0-Jxv0vMe-0" 
+}
+        </pre>
+    
+      <p>
+      Once you have the user's token, store it locally. Then, add this token as a header on every API call marked as "Authorization required" along this document. The API token expires after 60 minutes. Please use the following key/value for building your request header:
+      </p>
+
+        <table class="table table-condensed">
+        <thead><tr><th>Header key</th><th>Header value</th></tr></thead>
+        <tbody><tr><td>Authorization</td><td>Bearer <code>[token]</code></td></tr>
+        </tbody></table>
+
+    </div>
+  </div>
+
+
+<hr/>
+
+  <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/users GET</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Get details about the authorized user</h4>
+        <h5>Sample response:</h5>
+<pre>
+{ 
+password: "$2a$10$N3KZv5IkqxtyJCJbqFRjyux5k/qCYfb8SRTx/GLEhSSykSWzOtEdG"
+username: "pimba-tests"
+_id: "543a8dee2d4a48f83f000001"
+__v: 0
+perspectives: [0] 
+}</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+    <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/users POST</h4></div>
+    <div class="col-md-7">
+        <h4>Creates a new user</h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>username</td><td>(String) Required</td>
+        </tr><tr><td>password</td><td>(String) Required</td></tr>
+        </tbody></table>
+
+        <h5>Sample response:</h5>
+
+<pre>{ 
+password: "$2a$10$N3KZv5IkqxtyJCJbqFRjyux5k/qCYfb8SRTx/GLEhSSykSWzOtEdG"
+username: "pimba-tests"
+_id: "543a8dee2d4a48f83f000001"
+__v: 0
+perspectives: [0] 
+}</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+     <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/users PUT</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Update details about the authorized user</h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>username</td><td>(String) Optional</td>
+        </tr><tr><td>password</td><td>(String) Optional</td></tr>
+        </tbody></table>
+
+        <h5>Sample response:</h5>
+
+<pre>{ 
+password: "$2a$10$N3KZv5IkqxtyJCJbqFRjyux5k/qCYfb8SRTx/GLEhSSykSWzOtEdG"
+username: "pimba-changed"
+_id: "543a8dee2d4a48f83f000001"
+__v: 0
+perspectives: [0] 
+}</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/cards/<code>[Card ID]</code> GET</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Get the details about the card whose id = <code>[Card ID]</code></h4>
+
+        <h5>Sample response:</h5>
+
+<pre>
+{
+__v: 4
+_id: "543b25d6ebc3f26a8b000004"
+parent: "543b2572ebc3f26a8b000001"
+title: "my card title"
+description: "my card description"
+user: "543a9e2c8e7d18de54000001"
+childs: [4] {
+            0:  "543b2b676abd37648f000006"
+            1:  "543b2b716abd37648f000007"
+            2:  "543b2b7c6abd37648f000008"
+            3:  "543b2b8a6abd37648f000009" 
+            }
+}
+</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+    <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/cards POST</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Create a new card for the authenticated user</h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>title</td><td>(String) Optional</td>
+        </tr><tr><td>description</td><td>(String) Optional</td></tr>
+        </tr><tr><td>parent</td><td>(Card ID) Optional</td></tr>
+        </tbody></table>
+
+        <p>If the <code>parent</code> parameter is provided, the card will be also added as a child of the parent card.</p>
+
+        <h5>Sample response:</h5>
+
+<pre>
+{
+__v: 4
+_id: "543b25d6ebc3f26a8b000004"
+parent: "543b2572ebc3f26a8b000001"
+title: "my new card title"
+description: "my new card description"
+user: "543a9e2c8e7d18de54000001"
+childs: [0]
+}
+</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+    <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/cards/<code>[Card ID]</code> PUT</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Update the card whose id = <code>[Card ID]</code></h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>title</td><td>(String) Optional</td>
+        </tr><tr><td>description</td><td>(String) Optional</td></tr>
+        </tr><tr><td>parent</td><td>(Card ID) Optional</td></tr>
+        </tbody></table>
+
+        <p>If the <code>parent</code> parameter is provided, the card will be also added as a child of the parent card and removed from the children's list of the previous parent card.</p>
+
+        <h5>Sample response:</h5>
+
+<pre>
+{
+__v: 4
+_id: "543b25d6ebc3f26a8b000004"
+parent: "543b2572ebc3f26a8b000001"
+title: "my modified card title"
+description: "my modified card description"
+user: "543a9e2c8e7d18de54000001"
+childs: [0]
+}
+</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+
+
+      <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/cards/<code>[Card ID]</code> DELETE</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Delete the card whose id = <code>[Card ID]</code></h4>
+
+        <p><code>TO DO:</code>All nested cards are deleted</p>
+        <p><code>TO DO:</code>The card is also removed from the parent's child list</p>
+
+        <h5>Sample response:</h5>
+
+<pre>
+{
+Message: "Card successfuly deleted"
+}
+</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+
+
+      <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/perspectives/<code>[Card ID]</code> GET</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Get card details, including childs and grandchilds.</h4>
+
+        <h5>Sample response:</h5>
+
+
+ <pre>
+  {
+  title: "el abuelo juanjo"
+  user: "543a9e2c8e7d18de54000001"
+  __v: 3
+  _id: "543b2572ebc3f26a8b000001"
+  childs: [3]
+  0:  {
+      __v: 3
+      _id: "543b25b4ebc3f26a8b000002"
+      parent: "543b2572ebc3f26a8b000001"
+      title: "el tio manolo"
+      user: "543a9e2c8e7d18de54000001"
+      childs: [3]
+      0:  {
+          parent: "543b25b4ebc3f26a8b000002"
+          title: "el primo luis"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2a7b6abd37648f000001"
+          __v: 0
+          childs: [0]
+          }
+      1:  {
+          parent: "543b25b4ebc3f26a8b000002"
+          title: "el primo jacobo"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2a896abd37648f000002"
+          __v: 0
+          childs: [0]
+          }
+      2:  {
+          parent: "543b25b4ebc3f26a8b000002"
+          title: "el primo indalecio"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2a916abd37648f000003"
+          __v: 0
+          childs: [0]
+          }
+    }
+  1:  {
+      __v: 2
+      _id: "543b25cdebc3f26a8b000003"
+      parent: "543b2572ebc3f26a8b000001"
+      title: "el tio segundino"
+      user: "543a9e2c8e7d18de54000001"
+      childs: [2]
+      0:  {
+          parent: "543b25cdebc3f26a8b000003"
+          title: "la prima maria"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2b136abd37648f000004"
+          __v: 0
+          childs: [0]
+          }
+      1:  {
+          parent: "543b25cdebc3f26a8b000003"
+          title: "la prima lorena"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2b1b6abd37648f000005"
+          __v: 0
+          childs: [0]
+          }
+
+      }
+  2:  {
+      parent: "543b2572ebc3f26a8b000001"
+      title: "el tio nacho"
+      user: "543a9e2c8e7d18de54000001"
+      __v: 4
+      _id: "543b25d6ebc3f26a8b000004"
+      childs: [4]
+      0:  {
+          parent: "543b25d6ebc3f26a8b000004"
+          title: "el primo alfredo"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2b676abd37648f000006"
+          __v: 0
+          childs: [0]
+          }
+      1:  {
+          parent: "543b25d6ebc3f26a8b000004"
+          title: "el primo timothy"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2b716abd37648f000007"
+          __v: 0
+          childs: [0]
+          }
+      2:  {
+          parent: "543b25d6ebc3f26a8b000004"
+          title: "el primo julian"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2b7c6abd37648f000008"
+          __v: 0
+          childs: [0]
+          }
+      3:  {
+          parent: "543b25d6ebc3f26a8b000004"
+          title: "el primo marsopin"
+          user: "543a9e2c8e7d18de54000001"
+          _id: "543b2b8a6abd37648f000009"
+          __v: 0
+          childs: [0]
+          }
+      }
+  }
+</pre>
+
+
+    </div>
+  </div>
+
+  <hr/>
+
+
+
+
+      <div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/perspectives POST</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Creates a new perspective for the authenticated user</h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>Card ID</td><td>(String) Required</td>
+        </tbody></table>
+
+        <h5>Sample response:</h5>
+
+<pre>
+{
+__v: 7
+_id: "543a9e2c8e7d18de54000001"
+password: "$2a$10$O6GITtGEqYmD/gXdHJkM3OqizLgbTQi/knalMNLMvfvQXUr7OQLAi"
+username: "pimba"
+perspectives: [1] {
+                  0:  "543b2572ebc3f26a8b000001"
+                  }
+}
+</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+
+<div class="row">
+    <div class="col-md-3 col-md-offset-1"><h4>/api/perspectives DELETE</h4><small>Require auth. token</small></div>
+    <div class="col-md-7">
+        <h4>Remove a perspective of the authenticated user</h4>
+
+        <table class="table table-condensed">
+        <thead><tr><th>POST parameter</th><th>Type</th></tr></thead>
+        <tbody><tr><td>Card ID</td><td>(String) Required</td>
+        </tbody></table>
+
+        <h5>Sample response:</h5>
+
+<pre>
+{
+__v: 7
+_id: "543a9e2c8e7d18de54000001"
+password: "$2a$10$O6GITtGEqYmD/gXdHJkM3OqizLgbTQi/knalMNLMvfvQXUr7OQLAi"
+username: "pimba"
+perspectives: [0] 
+}
+</pre>
+
+    </div>
+  </div>
+
+  <hr/>
+
+
+ 
+
+
+
 </div>
 
 

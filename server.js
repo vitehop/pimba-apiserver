@@ -225,7 +225,7 @@ router.route('/cards/:card_id')
 			if (err)
 				res.send(err);
 
-			res.json({ message: 'Card successfully deleted!' });
+			res.json(card);
 		});
 	})
 
@@ -256,7 +256,7 @@ router.route('/perspectives')
 			// guardamos el usuario
 			user.save(function(err){
 				if (err) res.send(err);
-				res.json({message: 'Perspective added!'});
+				res.json(user);
 			});
 
 		});
@@ -284,7 +284,7 @@ router.route('/perspectives')
 			// guardamos el usuario
 			user.save(function(err){
 				if (err) res.send(err);
-				res.json({message: 'Perspective successfully deleted!'});
+				res.json(user);
 			});
 		});
 
@@ -366,7 +366,7 @@ router.route('/users')
 		//save user
 		user.save(function(err){
 			if (err) res.send(err);
-			res.json({message: 'User created!'});
+			res.json(user);
 		});
 	})
 
@@ -391,7 +391,7 @@ router.route('/users')
 
 			user.save(function(err){
 				if (err) res.send(err);
-				res.json({message: 'User updated!'});
+				res.json(user);
 			})
 		});
 	});
