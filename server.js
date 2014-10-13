@@ -88,7 +88,19 @@ router.route('/cards')
 		card.save(function(err) {
 
 			if (err) res.send(err);
+
+			// Si la nueva tarjeta tiene padre, le busco para añadirle su nuevo hijo
+			if(card.parent){
+				Card.findById(card.parent, function(err,parentCard) {
+					if(err) res.send(err);
+					parentCard.childs.push(card._id);
 				
+					parentCard.save(function(err){
+						if(err) res.send(err);
+					});
+				});
+			}
+
 			// Si la nueva tarjeta no tiene padre, la incluimos como perspectiva del usuario que la está creando
 			if(!card.parent){			
 				User.findById(user_id,function(err, user) {
@@ -190,7 +202,7 @@ router.route('/cards/:card_id')
 			// Guardamos finalmente la tarjeta con todos los cambios
 			card.save(function(err){
 				if(err) res.send(err);
-				res.json({message: 'Card updated!'});
+				res.json(card);
 			});
 			
 		});
