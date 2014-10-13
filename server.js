@@ -280,13 +280,14 @@ router.route('/perspectives')
 			var index=user.perspectives.indexOf(req.params.perspective_id);
 			user.perspectives.splice(index,1);
 
+			// guardamos el usuario
+			user.save(function(err){
+				if (err) res.send(err);
+				res.json({message: 'Perspective successfully deleted!'});
+			});
 		});
 
-		// guardamos el usuario
-		user.save(function(err){
-			if (err) res.send(err);
-			res.json({message: 'Perspective successfully deleted!'});
-		});
+
 	});
 
 
