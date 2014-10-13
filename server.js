@@ -86,10 +86,22 @@ router.route('/cards')
 
 		// save the card and check for errors
 		card.save(function(err) {
-			if (err)
-				res.send(err);
+
+			if (err) res.send(err);
 				
-			res.json({ message: 'Card created!' });
+			// Si la nueva tarjeta no tiene padre, la incluimos como perspectiva del usuario que la está creando
+			if(!card.parent){			
+				User.findById(user_id,function(err, user) {
+					if (err) res.send(err);
+					user.perspectives.push(card._id);
+					user.save(function(err){
+						if(err) res.send(err);
+					});
+
+					});
+			}
+
+			res.json(card);
 		});
 		
 	})
