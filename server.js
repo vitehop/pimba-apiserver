@@ -351,11 +351,15 @@ router.route('/users')
 		var token = (req.headers["authorization"]).substring(7);
 		var token_decoded = jsonwebtoken.decode(token);
 		var user_id = token_decoded.id;
-	 
-		User.findById( user_id , function(err, user) {
-			if (err) res.send(err);
-			res.json(user);
-		});
+
+        User.findOne({_id: user_id})
+            .populate({ path: 'perspectives' })
+            .exec(function(err, user) {
+            if (err) res.send(err);
+            console.log(util.inspect(user));
+            res.json(user);
+        });
+
 	})
 
 	// ---------------------------------------
