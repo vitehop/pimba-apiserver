@@ -261,7 +261,14 @@ router.route('/perspectives')
 			// guardamos el usuario
 			user.save(function(err){
 				if (err) res.send(err);
-				res.json(user);
+
+                User.findOne({_id : user._id})
+                    .populate({path:'perspectives'})
+                    .exec(function(err, user) {
+                        if (err) res.send(err);
+                        console.log(util.inspect(user));
+                        res.json(user);
+                    });
 			});
 
 		});
@@ -288,8 +295,15 @@ router.route('/perspectives')
 
 			// guardamos el usuario
 			user.save(function(err){
-				if (err) res.send(err);
-				res.json(user);
+                if (err) res.send(err);
+
+                User.findOne({_id : user._id})
+                    .populate({path:'perspectives'})
+                    .exec(function(err, user) {
+                        if (err) res.send(err);
+                        console.log(util.inspect(user));
+                        res.json(user);
+                    });
 			});
 		});
 
