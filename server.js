@@ -53,8 +53,13 @@ var router = express.Router(); 	// get an instance of the express Router
 
 // One route to rule them all
 router.use(function(req, res, next) {
-	console.log('Pimba!'); 
-	next(); // nos aseguramos de que esto se ejecuta pero sigue buscando rutas a continuación
+	console.log('Pimba!');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Content-Type', 'application/json');
+
+    next(); // nos aseguramos de que esto se ejecuta pero sigue buscando rutas a continuación
 });
 
 
