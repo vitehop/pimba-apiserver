@@ -64,15 +64,47 @@ token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9. eyJpZCI6IjU0M2E4ZGVlMmQ0YTQ4ZjgzZj
     <div class="col-md-3 col-md-offset-1"><h4>/api/users GET</h4><small>Require auth. token</small></div>
     <div class="col-md-7">
         <h4>Get details about the authorized user</h4>
+        <p>The property <code>Perspectives</code> is an array containing the list of cards that the user has saved as perspectives.</p>
         <h5>Sample response:</h5>
 <pre>
-{ 
-password: "$2a$10$N3KZv5IkqxtyJCJbqFRjyux5k/qCYfb8SRTx/GLEhSSykSWzOtEdG"
-username: "pimba-tests"
-_id: "543a8dee2d4a48f83f000001"
-__v: 0
-perspectives: [0] 
-}</pre>
+{
+__v: 9
+_id: "543a9e2c8e7d18de54000001"
+password: "$2a$10$O6GITtGEqYmD/gXdHJkM3OqizLgbTQi/knalMNLMvfvQXUr7OQLAi"
+username: "pimba"
+perspectives: [3]
+0:  {
+    __v: 3
+    _id: "543b2572ebc3f26a8b000001"
+    title: "el abuelo juanjo"
+    user: "543a9e2c8e7d18de54000001"
+    childs: [3]
+            0:  "543b25b4ebc3f26a8b000002"
+            1:  "543b25cdebc3f26a8b000003"
+            2:  "543b25d6ebc3f26a8b000004"
+            -
+    }-
+1:  {
+    __v: 3
+    _id: "543a9f457077894158000001"
+    description: "Descripcion de la primera tarjeta del mundo"
+    parent: "543aeb460ab8d9af66000001"
+    title: "My first card"
+    user: "543a9e2c8e7d18de54000001"
+    childs: [1]
+            0:  "543a9f81e22419ba59000001"
+            -
+    }-
+2:  {
+    title: "el abuelo felipe"
+    user: "543a9e2c8e7d18de54000001"
+    _id: "543b1e1981a63ee383000001"
+    __v: 0
+    childs: [0]
+    }-
+-
+}
+</pre>
 
     </div>
   </div>
