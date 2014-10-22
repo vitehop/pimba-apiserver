@@ -51,13 +51,30 @@ app.use(express.static(__dirname + '/public'));	// Publicamos bajo el server la 
 // =============================================================================
 var router = express.Router(); 	// get an instance of the express Router
 
-// One route to rule them all
+// One route to log them all
 router.use(function(req, res, next) {
-	console.log('Pimba!');
+
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Content-Type', 'application/json');
+
+
+    if (req) console.log('\n\n***************'+
+                         '\nREQUEST '+ util.inspect(req.method) + ' ' +util.inspect(req.url)+
+                         '\n***************\n'+
+                         util.inspect(req.headers)+
+                        '\n---------------\n'+
+                         util.inspect(req.params)+util.inspect(req.query));
+
+    if (res) console.log('\n\n***************'+
+        '\nRESPONSE '+ util.inspect(res.method) + ' ' +util.inspect(res.url)+
+        '\n***************\n'+
+        util.inspect(res.headers)+
+        '\n---------------\n'+
+        util.inspect(res.params)+util.inspect(res.query));
+
+
 
     next(); // nos aseguramos de que esto se ejecuta pero sigue buscando rutas a continuación
 });
@@ -138,7 +155,8 @@ router.route('/cards')
 
 		Card.find({user: user_id},function(err, cards) {
 			if (err) res.send(err);
-			res.json(cards);
+            res.json(cards);
+
 		});
 	});
 	
@@ -266,7 +284,6 @@ router.route('/perspectives')
                     .populate({path:'perspectives'})
                     .exec(function(err, user) {
                         if (err) res.send(err);
-                        console.log(util.inspect(user));
                         res.json(user);
                     });
 			});
@@ -301,7 +318,6 @@ router.route('/perspectives')
                     .populate({path:'perspectives'})
                     .exec(function(err, user) {
                         if (err) res.send(err);
-                        console.log(util.inspect(user));
                         res.json(user);
                     });
 			});
@@ -370,7 +386,6 @@ router.route('/users')
             .populate({ path: 'perspectives' })
             .exec(function(err, user) {
             if (err) res.send(err);
-            console.log(util.inspect(user));
             res.json(user);
         });
 
@@ -403,7 +418,6 @@ router.route('/users')
 		var token = (req.headers["authorization"]).substring(7);
 		var token_decoded = jsonwebtoken.decode(token);
 		var user_id = token_decoded.id;
-		console.log(req.username);	
 		
 		User.findById( user_id , function(err, user) {
 			if (err) res.send(err);
@@ -451,7 +465,6 @@ router.route('/login')
 	        	res.json({message: 'Invalid username'});
 	        }
 
- 		   	console.log(user);
 	        user.comparePassword(password, function(isMatch) {
 	            if (!isMatch) {
 	                console.log("Attempt failed to login with " + user.username);
