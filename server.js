@@ -39,7 +39,8 @@ app.use(bodyParser.json());
 
 // MongoDB setups
 // MongoLab - account vitehop@gmail.com
-mongoose.connect('mongodb://pimba:pimba@ds041167.mongolab.com:41167/pimba'); 
+mongoose.connect('mongodb://pimba:pimba@ds047440.mongolab.com:47440/pimba-2');
+//mongoose.connect('mongodb://pimba:pimba@ds041167.mongolab.com:41167/pimba');
 
 var port = process.env.PORT || 8080; 		// set our port
 app.use(express.static(__dirname + '/public'));	// Publicamos bajo el server la carpeta /public
@@ -60,19 +61,8 @@ router.use(function(req, res, next) {
     res.header('Content-Type', 'application/json');
 
 
-    if (req) console.log('\n\n***************'+
-                         '\nREQUEST '+ util.inspect(req.method) + ' ' +util.inspect(req.url)+
-                         '\n***************\n'+
-                         util.inspect(req.headers)+
-                        '\n---------------\n'+
-                         util.inspect(req.params)+util.inspect(req.query));
+    if (req) console.log('REQUEST '+ util.inspect(req.method) + ' ' +util.inspect(req.url));
 
-    if (res) console.log('\n\n***************'+
-        '\nRESPONSE '+ util.inspect(res.method) + ' ' +util.inspect(res.url)+
-        '\n***************\n'+
-        util.inspect(res.headers)+
-        '\n---------------\n'+
-        util.inspect(res.params)+util.inspect(res.query));
 
 
 
@@ -194,16 +184,26 @@ router.route('/cards/:card_id')
 
 			// Si es el padre lo que hay que actualizar, además del propio campo de padre en la tarjeta también 
 			// hay que actualizar los hijos de su nuevo padre, y eliminar el hijo de su padre anterior
-			if(req.body.parent) {
+            // Añadimos la comprobación adicional de no hacer nada si el nuevo padre es el mismo que el que ya tenía
+
+			if(req.body.parent && req.body.parent!=card.parent) {
 
 				//Añadimos el hijo a su nuevo padre
 				Card.findById(req.body.parent, function(err,parentCard) {
 					if(err) res.send(err);
-					parentCard.childs.push(req.params.card_id);
-				
-					parentCard.save(function(err){
-						if(err) res.send(err);
-					});
+
+                    //Añadimos el hijo a su nuevo padre solo si no lo contenía ya
+                    if(parentCard.childs.indexOf(req.params.card_id)>=0) {
+                        console.log("La tarjeta " + req.params.card_id + " ya es hija de " + parentCard.title);
+                    }
+                    else {
+                        parentCard.childs.push(req.params.card_id);
+                        console.log("|--> He añadido "+req.params.card_id+" a la lista de hijos de "+parentCard.title);
+                        parentCard.save(function(err){
+                            if(err) res.send(err);
+                        });
+                    }
+
 				});
 
 				//Eliminamos el hijo de su padre anterior
