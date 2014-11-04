@@ -95,13 +95,15 @@ router.route('/cards')
 		card.title = req.body.title; 
 		card.description = req.body.description;
 		card.parent = req.body.parent;
+        card.posx = req.body.posx;
+        card.posy = req.body.posy;
 
 		// save the card and check for errors
 		card.save(function(err) {
 
 			if (err) res.send(err);
 
-			// Si la nueva tarjeta tiene padre, le busco para añadirle su nuevo hijo
+			// Si la nueva tarjeta tiene padre, le busco para añadirle su nuevo hijo en su lista de hijos
 			if(card.parent){
 				Card.findById(card.parent, function(err,parentCard) {
 					if(err) res.send(err);
@@ -114,7 +116,7 @@ router.route('/cards')
 			}
 
 			// Si la nueva tarjeta no tiene padre, la incluimos como perspectiva del usuario que la está creando
-			if(!card.parent){			
+			else{
 				User.findById(user_id,function(err, user) {
 					if (err) res.send(err);
 					user.perspectives.push(card._id);
@@ -180,10 +182,15 @@ router.route('/cards/:card_id')
 			
 			// update the card info, solo si los parámetros vienen en la request
 			if(req.body.title) card.title = req.body.title; 
-			if(req.body.description) card.description = req.body.description;	
+			if(req.body.description) card.description = req.body.description;
+            if(req.body.posx) card.posx = req.body.posx;
+            if(req.body.posy) card.posy = req.body.posy;
+            
 
-			// Si es el padre lo que hay que actualizar, además del propio campo de padre en la tarjeta también 
-			// hay que actualizar los hijos de su nuevo padre, y eliminar el hijo de su padre anterior
+			// Para gestionar los listados de hijos y parents:
+			// - Se actualiza el propio campo "parent" en la tarjeta (hecho arriba)
+			// - Se añade a la lista de hijos de su nuevo padre
+			// - Se eliminan el hijo de la lista de hijos en su padre anterior
             // Añadimos la comprobación adicional de no hacer nada si el nuevo padre es el mismo que el que ya tenía
 
 			if(req.body.parent && req.body.parent!=card.parent) {
@@ -363,7 +370,42 @@ router.route('/perspectives/:card_id')
 	});
 
 
- 
+// ----------------------------------------------
+// RUTA: /api/perspectives/[card_id]/[num_levels]
+// ----------------------------------------------
+
+router.route('/perspectives/:card_id/:num_levels')
+
+    // 	--------------------------------------------
+    // 	GET /api/perspectives/[card_id]/[num_levels]
+    // 	--------------------------------------------
+    //  Obtiene un JSON con el arbol completo desde la card_id especificada conteniendo
+    //  tantos niveles como se especifiquen en [num_levels]
+
+    .get(jwt({secret: secret.secretToken}),function(req, res) {
+
+        Card.findById(req.params.card_id)
+            .lean()
+            .populate({ path: 'childs' })
+            .exec(function(err, docs) {
+
+                var options = {
+                    path: 'childs.childs',
+                    model: 'Card'
+                };
+
+                if (err) return res.json(500);
+
+                Card.populate(docs, options, function (err, perspectiva) {
+                    res.json(perspectiva);
+                });
+
+            });
+
+    });
+
+
+
 
 // ---------------------------------------
 // RUTA: /api/users 
