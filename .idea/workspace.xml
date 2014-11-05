@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c06f7f6d-8147-4daa-b86a-bd8272c93cbf" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/cards.js" afterPath="$PROJECT_DIR$/models/cards.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="c06f7f6d-8147-4daa-b86a-bd8272c93cbf" name="Default" comment="" />
     <ignored path="pimba-apiserver.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
