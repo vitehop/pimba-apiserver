@@ -504,7 +504,8 @@ router.route('/login')
 	        }
 
 	        if(!user){
-	        	res.json({message: 'Invalid username'});
+                console.log("Username not found");
+	        	return res.send(401);
 	        }
 
 	        user.comparePassword(password, function(isMatch) {
