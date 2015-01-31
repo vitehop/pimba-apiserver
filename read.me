@@ -64,66 +64,6 @@ Cómo funciona la autenticación
 API Docs
 ========
 
-/api/login							POST	: Crea y devuelve un token de autenticación. NO REQ. AUTENTIACION
-
-	  Params:
-	  username (String)
-	  password (String)
-
-		Example response:
-		{
-token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU0M2E4ZGVlMmQ0YTQ4ZjgzZjAwMDAwMSIsImlhdCI6MTQxMzEyMzg4NCwiZXhwIjoxNDEzMTI3NDg0fQ.QOURHM8TTOj3zyOKXtAYWApAwPICfaBK0-Jxv0vMe-0"
-}
-
-
-
-/api/users							GET		: Devuelve los detalles del usuario logado, incluyendo sus perspectivas REQ. AUTENTICACION.
-
-
-		Example response:
-		
-		{
-		password: "$2a$10$N3KZv5IkqxtyJCJbqFRjyux5k/qCYfb8SRTx/GLEhSSykSWzOtEdG"
-		username: "pimba-tests"
-		_id: "543a8dee2d4a48f83f000001"
-		__v: 0
-		perspectives: [0]
-		}
-
-
-/api/users							POST	: Crea un nuevo usuario. NO REQUIERE AUTENTICACIÓN
-
-
-	  Params:
-	  username (String)
-	  password (String)
-
-	  Example response:
-
-	 	{
-		message: "User created!"
-		}
-
-
-
-/api/users							PUT		: Update los detalles del usuario logado 
-
-	Params:
-	username (String) (Optional)
-	password (String) (Optional)
-
-	  Example response:
-
-	 	{
-		message: "User updated!"
-		}
-
-/api/cards/<card_id> 				GET 	: Devuelve los detalles de una tarjeta
-/api/cards		 					POST 	: Crea una tarjeta (detalles de la tarjeta como parámetros)
-/api/cards							PUT		: Actualiza los detalles de una tarjeta (card ID y detalles como parámetros)
-/api/cards							DELETE	: Elimina una tarjeta (Card ID como parámetro)
-
-/api/perspectives/<card_id>			GET		: Devuelve la perspectiva de esa tarjeta
 /api/perspectives					POST	: Crea una nueva perspectiva para el usuario logado (Card ID como parámetro)
 /api/perspectives					DELETE	: Elimina una perspectiva del usuario logado (Card ID como parámetro)
 
