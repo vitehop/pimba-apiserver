@@ -16,8 +16,7 @@ var CardSchema   = new Schema({
 	user: {type:Schema.Types.ObjectId, ref:'User'},
 	title: String,
 	description: String,
-    posx: String,
-    posy: String,
+    colmd: String,
 	parent: { type : Schema.Types.ObjectId, ref: 'Card' },
 	childs: [{ type : Schema.Types.ObjectId, ref: 'Card' }]
 });

@@ -60,9 +60,11 @@ router.use(function(req, res, next) {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Content-Type', 'application/json');
 
-
-    if (req) console.log('REQUEST '+ util.inspect(req.method) + ' ' +util.inspect(req.url));
-
+    var dt = new Date();
+    var time = "[" + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds() + "]";
+    if (req) {
+        console.log(time+' REQUEST '+ util.inspect(req.method) + ' ' +util.inspect(req.url));
+    }
 
 
 
@@ -95,8 +97,7 @@ router.route('/cards')
 		card.title = req.body.title; 
 		card.description = req.body.description;
 		card.parent = req.body.parent;
-        card.posx = req.body.posx;
-        card.posy = req.body.posy;
+        card.colmd = req.body.colmd;
 
 		// save the card and check for errors
 		card.save(function(err) {
@@ -107,13 +108,19 @@ router.route('/cards')
 			if(card.parent){
 				Card.findById(card.parent, function(err,parentCard) {
 					if(err) res.send(err);
+
+                    console.log("nueva tarjeta con parent! el parent es " + parentCard.title);
 					parentCard.childs.push(card._id);
 				
 					parentCard.save(function(err){
 						if(err) res.send(err);
 					});
-				});
-			}
+
+                    res.json(card);
+                });
+
+
+            }
 
 			// Si la nueva tarjeta no tiene padre, la incluimos como perspectiva del usuario que la está creando
 			else{
@@ -122,12 +129,15 @@ router.route('/cards')
 					user.perspectives.push(card._id);
 					user.save(function(err){
 						if(err) res.send(err);
+                        res.json(card);
 					});
 
 					});
-			}
 
-			res.json(card);
+
+            }
+
+
 		});
 		
 	})
@@ -183,9 +193,8 @@ router.route('/cards/:card_id')
 			// update the card info, solo si los parámetros vienen en la request
 			if(req.body.title) card.title = req.body.title; 
 			if(req.body.description) card.description = req.body.description;
-            if(req.body.posx) card.posx = req.body.posx;
-            if(req.body.posy) card.posy = req.body.posy;
-            
+            if(req.body.colmd) card.colmd = req.body.colmd;
+
 
 			// Para gestionar los listados de hijos y parents:
 			// - Se actualiza el propio campo "parent" en la tarjeta (hecho arriba)
@@ -193,7 +202,8 @@ router.route('/cards/:card_id')
 			// - Se eliminan el hijo de la lista de hijos en su padre anterior
             // Añadimos la comprobación adicional de no hacer nada si el nuevo padre es el mismo que el que ya tenía
 
-			if(req.body.parent && req.body.parent!=card.parent) {
+            // Si no tiene padre
+			if(req.body.parent == "") {
 
 				//Añadimos el hijo a su nuevo padre
 				Card.findById(req.body.parent, function(err,parentCard) {
@@ -201,11 +211,9 @@ router.route('/cards/:card_id')
 
                     //Añadimos el hijo a su nuevo padre solo si no lo contenía ya
                     if(parentCard.childs.indexOf(req.params.card_id)>=0) {
-                        console.log("La tarjeta " + req.params.card_id + " ya es hija de " + parentCard.title);
                     }
                     else {
                         parentCard.childs.push(req.params.card_id);
-                        console.log("|--> He añadido "+req.params.card_id+" a la lista de hijos de "+parentCard.title);
                         parentCard.save(function(err){
                             if(err) res.send(err);
                         });
@@ -280,7 +288,7 @@ router.route('/perspectives')
 
 		// insertamos el parametro req.card_id como perspectiva al usuario
 		User.findById( user_id , function(err, user) {
-			if (err) res.send(err);			
+			if (err) res.send(err);
 			user.perspectives.push(req.body.card_id);
 		
 			// guardamos el usuario
